@@ -5,9 +5,18 @@ import styles from './ListTaks.module.css'
 
 interface Props {
   taskList: ITask[]
+  deleteTask: (taskId: number) => void;
+  chooseEditTask: (task: ITask) => void;
 }
 
-const ListTasks = ({taskList}: Props) => {
+const ListTasks = ({taskList, deleteTask, chooseEditTask}: Props) => {
+
+
+  const editTask = (task: ITask): void => {
+    chooseEditTask(task);
+  }
+
+
   return (
     <>
       {taskList.length > 0 ? taskList.map((task: ITask) => (
@@ -17,8 +26,8 @@ const ListTasks = ({taskList}: Props) => {
             <p>Dificuldade: {task.difficulty}</p>
           </div>
           <div className={styles.actions}>
-            <i className="bi bi-pencil"></i>
-            <i className="bi bi-trash"></i>
+            <i onClick={() => editTask(task)} className="bi bi-pencil"></i>
+            <i onClick={() => deleteTask(task.id)} className="bi bi-trash"></i>
           </div>
         </div>
       )) : (<p>Sem tarefas cadastradas</p>)}

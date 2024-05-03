@@ -1,5 +1,5 @@
 // react
-import { useState, FormEvent } from "react"
+import { useState, useEffect, FormEvent } from "react"
 // styles
 import styles from "./TaskForm.module.css"
 // interfaces
@@ -8,30 +8,47 @@ import { ITask } from "../../interfaces/Task";
 interface Props {
   btnText: string;
   addTask: (task: ITask) => void;
+  editedTask: ITask | null;
+  editTask: (task: ITask) => void;
 }
 
-const TaskForm = ({ btnText, addTask }: Props) => {
+const TaskForm = ({ btnText, addTask, editedTask, editTask }: Props) => {
 
   const [title, setTitle] = useState<string>("")
   const [difficulty, setDifficulty] = useState<number>(0)
 
+  useEffect(() => {
+    if(editedTask){
+      setDifficulty(editedTask.difficulty);
+      setTitle(editedTask.title);
+    }
+  }, [editedTask])
+
+
   const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const id = Math.floor(Math.random() * 1000);
-    const newTask: ITask = {
-      id, title, difficulty,
-    }
-    addTask(newTask);
+    if(editedTask){
 
-    setTitle("");
-    setDifficulty(0);
+      editedTask.title = title;
+      editedTask.difficulty = difficulty;
+      editTask(editedTask)
+
+    } else {
+
+      const id = Math.floor(Math.random() * 1000);
+      const newTask: ITask = {
+        id, title, difficulty,
+      }
+      addTask(newTask);
+      setTitle("");
+      setDifficulty(0);
+    }
   }
 
 
   return (
     <div>
-      <h2>O que você vai fazer?</h2>
       <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
         <div className={styles.inputContainer}>
           <label>Título: </label>
